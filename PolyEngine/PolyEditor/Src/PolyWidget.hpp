@@ -2,9 +2,12 @@
 
 #include "qdockwidget.h"
 
+class PolyWindow;
+
 class PolyWidget : public QWidget
 {
 	friend class PolyWindow;
+	friend class PolyDockManager;
 
 	Q_OBJECT
 public:

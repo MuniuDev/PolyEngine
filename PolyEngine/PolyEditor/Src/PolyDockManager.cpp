@@ -18,7 +18,19 @@ void PolyDockManager::ProcessEvent(QEvent* event)
 {
 	if (DraggedWidget != nullptr)
 		if (event->type() == QEvent::MouseMove)
+		{
 			WidgetMoveEvent(event);
+
+			if (MouseOver && MouseOver != DraggedWidget->DockWidget->parent())
+			{
+				QPoint pos = ((QMainWindow*)DraggedWidget->DockWidget->parent())->pos();
+				QSize size = ((QMainWindow*)DraggedWidget->DockWidget->parent())->size();
+				((QMainWindow*)DraggedWidget->DockWidget->parent())->move(MouseOver->pos());
+				((QMainWindow*)DraggedWidget->DockWidget->parent())->resize(MouseOver->size());
+				MouseOver->move(pos);
+				MouseOver->resize(size);
+			}
+		}
 		else if (event->type() == QEvent::MouseButtonRelease)
 			WidgetDropEvent(event);
 }
