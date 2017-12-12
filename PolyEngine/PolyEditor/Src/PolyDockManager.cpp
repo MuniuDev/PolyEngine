@@ -29,6 +29,13 @@ void PolyDockManager::ProcessEvent(QEvent* event)
 				((QMainWindow*)DraggedWidget->DockWidget->parent())->resize(MouseOver->size());
 				MouseOver->move(pos);
 				MouseOver->resize(size);
+
+				//for (int i = 0; i < ((PolyWindow*)DraggedWidget->DockWidget->parent())->Widgets.GetSize(); i++)
+				//{
+				//	if (((PolyWindow*)DraggedWidget->DockWidget->parent())->Widgets[i] == DraggedWidget) continue;
+				//
+				//	MouseOver->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, ((PolyWindow*)DraggedWidget->DockWidget->parent())->Widgets[i]);
+				//}
 			}
 		}
 		else if (event->type() == QEvent::MouseButtonRelease)
