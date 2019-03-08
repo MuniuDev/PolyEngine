@@ -8,10 +8,12 @@ GenerateSourceGoups("${POLYENGINEAPI_SRCS}")
 
 add_library(${ENGINEAPI_TARGET} STATIC ${POLYENGINEAPI_SRCS})
 target_compile_options(${ENGINEAPI_TARGET} PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
+target_include_directories(${CORE_TARGET} PUBLIC ${POLYENGINEAPI_INCLUDE})
 
-target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} )
+
+target_link_libraries(${ENGINEAPI_TARGET} PUBLIC ${CORE_TARGET} )
 
 #set_target_properties(${ENGINEAPI_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/CorePCH.hpp")
-set_target_properties(${ENGINEAPI_TARGET} PROPERTIES FOLDER "EngineAPI" )
+set_target_properties(${ENGINEAPI_TARGET} PROPERTIES FOLDER "Engine" )
 
 #cotire(${ENGINEAPI_TARGET})

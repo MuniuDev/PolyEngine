@@ -8,6 +8,7 @@ namespace resources {
 
     class IResource : public Poly::BaseObject<>
     {
+    public:
         virtual ~IResource() override {}
     };  
 
