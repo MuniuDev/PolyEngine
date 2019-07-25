@@ -43,6 +43,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			if (!anim)
 			{
 				gConsole.LogError("Animation with name {} not found!", animName);
+				animsToremove.push_back(animName);
 				continue;
 			}
 			
@@ -97,7 +98,9 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					pos = posKey.Value;
 					if (lerpData.pos[1].HasValue())
 					{
-						pos = ::Poly::Lerp(pos, lerpData.pos[1].Value().Value, animState.Time - posKey.Time);
+						auto posKey2 = lerpData.pos[1].Value();
+						const float t = (animState.Time - posKey.Time) / (posKey2.Time - posKey.Time);
+						pos = ::Poly::Lerp(pos, posKey2.Value, t);
 					}
 				}
 				
@@ -108,7 +111,9 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					scale = scaleKey.Value;
 					if (lerpData.scale[1].HasValue())
 					{
-						scale = ::Poly::Lerp(scale, lerpData.scale[1].Value().Value, animState.Time - scaleKey.Time);
+						auto scaleKey2 = lerpData.scale[1].Value();
+						const float t = (animState.Time - scaleKey.Time) / (scaleKey2.Time - scaleKey.Time);
+						scale = ::Poly::Lerp(scale, scaleKey2.Value, t);
 					}
 				}
 
@@ -119,15 +124,21 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					rot = rotKey.Value;
 					if (lerpData.rot[1].HasValue())
 					{
-						const float t = std::min(animState.Time - rotKey.Time, 1.0f);
-						rot = Quaternion::Slerp(rot, lerpData.rot[1].Value().Value, t);
+						auto rotKey2 = lerpData.rot[1].Value();
+						const float t = (animState.Time - rotKey.Time) / (rotKey2.Time - rotKey.Time);
+						rot = Quaternion::Slerp(rot, rotKey2.Value, t);
 					}
 				}
 
 				// Push to the bone matrix blend list
 				Matrix parentFromBone = Matrix::Compose(pos, rot, scale);
 				boneMatrices[channelName].push_back({ parentFromBone, animState.Params.Weight });
+
+				//if(channelName == "Bone")
+				//	gConsole.LogError("Bone {} Pos: {} Rot: {} Scale: {}", channelName, pos, rot.ToEulerAngles(), scale);
 			}
+
+			//gConsole.LogError("Bone update End\n\n");
 
 			// Prepare list of animation to remove
 			if (animState.StopRequested && animState.Time >= anim->Duration)
@@ -201,7 +212,7 @@ void Poly::AnimationSystem::CreateBoneStructure(SkeletalAnimationComponent* anim
 	// Create skeleton
 	Entity* skeleton = DeferredTaskSystem::SpawnEntityImmediate(scene);
 	skeleton->SetParent(parent);
-	skeleton->GetTransform().SetParentFromModel(meshCmp->GetMesh()->GetModelFromSkeletonRoot());
+	skeleton->GetTransform().SetParentFromModel(meshCmp->GetMesh()->GetModelFromSkeletonRoot().GetInversed());
 	skeleton->SetName("Mesh_Skeleton");
 
 	// Create bones

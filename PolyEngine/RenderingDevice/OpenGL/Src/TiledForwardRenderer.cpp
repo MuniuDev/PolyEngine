@@ -725,6 +725,17 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 					if (it == animCmp->ModelFromBone.end())
 						continue;
 
+
+					if (b.name == "Bone")
+					{
+						Vector pos, scale;
+						Quaternion rot;
+
+						it->second.Decompose(pos, rot, scale);
+						gConsole.LogError("Bone {} Pos: {} Rot: {} Scale: {}", b.name, pos, rot.ToEulerAngles(), scale);
+					}
+						
+
 			 		Matrix animFromModel = it->second * b.boneFromModel;
 					StringBuilder sb;
 					sb.AppendFormat("uBones[{}]", count);
